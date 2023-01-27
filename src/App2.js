@@ -2,9 +2,9 @@ import './App.css';
 
 
 import React, {Component} from 'react';
+import {Paper} from "@mui/material";
 import ResultFieldComponent from "./components/resultFieldComponent";
 import KeyboardComponent from "./components/keyboardComponent";
-import {Paper} from "@mui/material";
 
 
 const styles = () => ({
@@ -18,7 +18,7 @@ const styles = () => ({
         backgroundColor:"#e0e0e0"
     }
 });
-class App extends Component {
+class App2 extends Component {
 
     state = {
         result: "0",
@@ -177,12 +177,14 @@ class App extends Component {
     }
 
     render() {
+
         const {
             result,
             historyList
-        } = this.props;
+        } = this.state;
+
         return (
-            <Paper >
+            <Paper>
                 <ResultFieldComponent result={result} historyList={historyList}/>
                 <KeyboardComponent clickProps = {this.clickToButton}/>
             </Paper>
@@ -190,5 +192,5 @@ class App extends Component {
     }
 }
 
-export default App;
+export default App2;
 
