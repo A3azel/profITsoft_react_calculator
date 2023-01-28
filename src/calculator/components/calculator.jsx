@@ -9,6 +9,16 @@ const numbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
 const calcOperands = ["+", "-", "/", "*"];
 class Calculator extends Component {
 
+    paperStyles = {
+        position: "relative",
+        padding: '20px',
+        margin: '5% 34% 5% 34%',
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        backgroundColor:"#e0e0e0"
+    }
+
     constructor(props) {
         super(props);
         this.state = {
@@ -19,16 +29,6 @@ class Calculator extends Component {
         }
     }
 
-
-    paperStyles = {
-        position: "relative",
-        padding: '20px',
-        margin: '5% 34% 5% 34%',
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        backgroundColor:"#e0e0e0"
-    }
     clickToButton = buttonValue => {
         if(buttonValue === "="){
             this.calcInputExpression();
@@ -114,7 +114,7 @@ class Calculator extends Component {
         }
     }
     calcExpression(expressionString){
-        debugger;
+        //debugger;
         let result = expressionString.match(/(^-?\d+\.?\d*)([/+*-])(\d+\.?\d*)/);
         let firstNumber;
         let operand;
@@ -141,11 +141,6 @@ class Calculator extends Component {
                 break;
             case "/":
                 if(secondNumber===0){
-                    this.setState({
-                        historyList: [...this.state.historyList, this.state.result + "=Error division by zero"],
-                        isSecondNumber: false,
-                        result: "0"
-                    });
                     return;
                 }
                 calcResult = firstNumber / secondNumber;
@@ -162,6 +157,12 @@ class Calculator extends Component {
                 historyList: [...this.state.historyList, this.state.result + "=" + calcResult],
                 result: calcResult + nextOperand,
                 isSecondNumber: nextOperand!==""
+            });
+        }else {
+            this.setState({
+                historyList: [...this.state.historyList, this.state.result + "=Error division by zero"],
+                isSecondNumber: false,
+                result: "0"
             });
         }
     }
@@ -191,10 +192,6 @@ class Calculator extends Component {
             defaultExpressions: this.props.expressionState.defaultExpressions
         });
         this.calcBeckEndExpression();
-        /*this.setState({
-            result: "0",
-            defaultExpressions: [],
-        });*/
     }
 
     render() {
@@ -203,7 +200,6 @@ class Calculator extends Component {
             historyList
         } = this.state;
 
-        console.log(this.state.historyList)
         return (
             <Paper sx={this.paperStyles}>
                 <ResultFieldComponent result={result} historyList={historyList}/>

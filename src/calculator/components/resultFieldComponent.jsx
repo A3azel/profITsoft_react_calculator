@@ -10,12 +10,13 @@ class ResultFieldComponent extends Component {
         return (
             <Container>
                 {historyList.slice(0, historyList.length-1).map(
-                    item =>
+                    (item, index) =>
                         <FilledInput
                             inputProps={{style: {fontSize: 30, textAlign:"right"}}}
                             sx={this.filedStyles}
                             value={item}
                             multiline
+                            key={index}
                         />
                 )}
                 {
