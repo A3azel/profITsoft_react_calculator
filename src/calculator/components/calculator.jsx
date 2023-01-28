@@ -1,14 +1,26 @@
-import './App.css';
-
-
 import React, {Component} from 'react';
 import {Paper} from "@mui/material";
-import ResultFieldComponent from "./components/resultFieldComponent";
-import KeyboardComponent from "./components/keyboardComponent";
+import ResultFieldComponent from "./resultFieldComponent";
+import KeyboardComponent from "./keyboardComponent";
+import {connect} from "react-redux";
+import expressionActions from "../actions/expression"
+
+const numbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+const calcOperands = ["+", "-", "/", "*"];
+class Calculator extends Component {
+
+    constructor(props) {
+        super(props);
+        this.state = {
+            result: "0",
+            historyList: [],
+            isSecondNumber: false,
+            defaultExpressions:[]
+        }
+    }
 
 
-const styles = () => ({
-    paperStyles:{
+    paperStyles = {
         position: "relative",
         padding: '20px',
         margin: '5% 34% 5% 34%',
@@ -17,20 +29,9 @@ const styles = () => ({
         alignItems: "center",
         backgroundColor:"#e0e0e0"
     }
-});
-class App2 extends Component {
-
-    state = {
-        result: "0",
-        historyList: [],
-        isSecondNumber: false,
-        numbers: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
-        calcOperands: ["+", "-", "/", "*"],
-        defaultExpressions:[]
-    }
     clickToButton = buttonValue => {
         if(buttonValue === "="){
-            this.calculateExpression();
+            this.calcInputExpression();
         }
         else if(buttonValue === "C"){
             if(this.state.result==="0"){
@@ -50,7 +51,7 @@ class App2 extends Component {
     }
 
     checkNumber = (possibleNumber) => {
-        if(this.state.numbers.includes(Number(possibleNumber))){
+        if(numbers.includes(Number(possibleNumber))){
             let checkNumber = this.state.result;
             let isSecondNumber = this.state.isSecondNumber;
 
@@ -95,15 +96,15 @@ class App2 extends Component {
         let strResult = this.state.result.toString();
         let isSecondNumber = this.state.isSecondNumber;
 
-        if(this.state.calcOperands.includes(possibleOperand)){
-            if(isSecondNumber && this.state.calcOperands.includes(strResult.charAt(strResult.length-1))){
+        if(calcOperands.includes(possibleOperand)){
+            if(isSecondNumber && calcOperands.includes(strResult.charAt(strResult.length-1))){
                 this.setState({
                     result: strResult.slice(0, -1) + possibleOperand,
                 })
                 return;
             }
-            if(isSecondNumber && !this.state.calcOperands.includes(strResult.charAt(strResult.length-1))){
-                this.calculateExpression(possibleOperand);
+            if(isSecondNumber && !calcOperands.includes(strResult.charAt(strResult.length-1))){
+                this.calcInputExpression(possibleOperand);
                 return;
             }
             this.setState({
@@ -112,8 +113,9 @@ class App2 extends Component {
             });
         }
     }
-    calculateExpression = (nextOperand = "") => {
-        let result = this.state.result.match(/(^-?\d+\.?\d*)([/+*-])(\d+\.?\d*)/);
+    calcExpression(expressionString){
+        debugger;
+        let result = expressionString.match(/(^-?\d+\.?\d*)([/+*-])(\d+\.?\d*)/);
         let firstNumber;
         let operand;
         let secondNumber;
@@ -124,7 +126,6 @@ class App2 extends Component {
         }catch (e){
             return;
         }
-
         firstNumber = Number(firstNumber);
         secondNumber = Number(secondNumber);
         let calcResult;
@@ -152,45 +153,72 @@ class App2 extends Component {
             default:
                 break;
         }
-        calcResult = Number(calcResult).toFixed(0);
+        return Number(calcResult).toFixed(0);
+    }
+    calcInputExpression(nextOperand = ""){
+        let calcResult = this.calcExpression(this.state.result);
+        if(calcResult!==undefined){
+            this.setState({
+                historyList: [...this.state.historyList, this.state.result + "=" + calcResult],
+                result: calcResult + nextOperand,
+                isSecondNumber: nextOperand!==""
+            });
+        }
+    }
+
+    calcBeckEndExpression(){
+        let beckEndCalcHistory =[];
+        this.state.defaultExpressions.forEach((expression) => {
+            let calcResult = this.calcExpression(expression);
+            if(calcResult!==undefined){
+                beckEndCalcHistory.push(expression + "=" + calcResult);
+            }else {
+                beckEndCalcHistory.push(expression + "=Error division by zero");
+            }
+
+        })
         this.setState({
-            historyList: [...this.state.historyList, this.state.result + "=" + calcResult],
-            result: calcResult + nextOperand,
-            isSecondNumber: nextOperand!==""
+            historyList: [...this.state.historyList, ...beckEndCalcHistory],
         });
     }
 
     getAndCalculateDefaultExpression = () => {
-        fetch('localhost:8080/math/expamples?count=5')
-            .then((response) => {
-                this.setState({defaultExpressions: [response.data]})
-            });
-        this.state.defaultExpressions.forEach(
-            x =>
-            {
-                this.setState({result: x});
-                this.calculateExpression();
-            })
+        expressionActions.fetchExpressions({
+            expressionsCount: 5
+        })(this.props.dispatch);
+
         this.setState({
-            result: "0",
+            defaultExpressions: this.props.expressionState.defaultExpressions
         });
+        this.calcBeckEndExpression();
+        /*this.setState({
+            result: "0",
+            defaultExpressions: [],
+        });*/
     }
 
     render() {
-
         const {
             result,
             historyList
         } = this.state;
 
+        console.log(this.state.historyList)
         return (
-            <Paper>
+            <Paper sx={this.paperStyles}>
                 <ResultFieldComponent result={result} historyList={historyList}/>
-                <KeyboardComponent clickProps = {this.clickToButton}/>
+                <KeyboardComponent clickProps = {this.clickToButton} calcExpressions={this.getAndCalculateDefaultExpression}/>
             </Paper>
         );
     }
 }
 
-export default App2;
+const mapReduxStateToProps = reduxState => ({
+    expressionState: reduxState
+});
 
+const mapDispatchToProps = dispatch => ({
+    dispatch,
+});
+
+export default connect(mapReduxStateToProps, mapDispatchToProps)(Calculator);

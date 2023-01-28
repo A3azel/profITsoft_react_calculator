@@ -1,16 +1,15 @@
 import React, {Component} from 'react';
 import {Container, FilledInput} from "@mui/material";
-
 class ResultFieldComponent extends Component {
-
     filedStyles = {
         width:"100%"
     }
     render() {
         const { result, historyList } = this.props;
+
         return (
             <Container>
-                {historyList.map(
+                {historyList.slice(0, historyList.length-1).map(
                     item =>
                         <FilledInput
                             inputProps={{style: {fontSize: 30, textAlign:"right"}}}
@@ -19,6 +18,16 @@ class ResultFieldComponent extends Component {
                             multiline
                         />
                 )}
+                {
+                    historyList.length!==0 ?
+                        <FilledInput
+                            inputProps={{style: {fontSize: 30, textAlign:"right", color:"red"}}}
+                            sx={this.filedStyles}
+                            value={historyList[historyList.length-1]}
+                            multiline
+                        /> : null
+                }
+
                 <FilledInput
                     inputProps={{style: {fontSize: 30, textAlign:"right"}}}
                     sx={this.filedStyles}
@@ -29,5 +38,4 @@ class ResultFieldComponent extends Component {
         );
     }
 }
-
-export default ResultFieldComponent;
+export default (ResultFieldComponent);

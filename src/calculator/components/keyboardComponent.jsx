@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import ButtonComponent from "./buttonComponent";
 import {Button, Grid} from "@mui/material";
 
+const calcButtonLabels = ['1', '2', '3', '+', '4', '5', '6', '-', '7', '8', '9', '*', 'C', '0', '=', '/'];
 class KeyboardComponent extends Component {
 
     buttonStyles={
@@ -10,10 +11,9 @@ class KeyboardComponent extends Component {
         width:"100%"
     }
     render() {
-        let calcButtonLabels = ['1', '2', '3', '+', '4', '5', '6', '-', '7', '8', '9', '*', 'C', '0', '=', '/'];
-
         const {
-            clickProps
+            clickProps,
+            calcExpressions,
         } = this.props;
 
         return (
@@ -24,12 +24,18 @@ class KeyboardComponent extends Component {
                   sx={{padding:'30px'}}
             >
                 {calcButtonLabels.map(
-                    calcLabel =>
-                        <Grid item xs={2} sm={3} md={3} key={calcLabel}>
+                    (calcLabel, index) =>
+                        <Grid item xs={2} sm={3} md={3} key={index}>
                             <ButtonComponent numb={calcLabel} clickProps={clickProps}/>
                         </Grid>
                 )}
-                <Button sx={this.buttonStyles} variant="contained">Получить и решить примеры</Button>
+                <Button
+                    sx={this.buttonStyles}
+                    variant="contained"
+                    onClick={calcExpressions}
+                >
+                    Получить и решить примеры
+                </Button>
             </Grid>
         );
     }
