@@ -29,6 +29,7 @@ class Calculator extends Component {
         }
     }
 
+    /*Якщо двічі натиснути на кнопку С то очиститься істрія*/
     clickToButton = buttonValue => {
         if(buttonValue === "="){
             this.calcInputExpression();
@@ -141,6 +142,11 @@ class Calculator extends Component {
                 break;
             case "/":
                 if(secondNumber===0){
+                    this.setState({
+                        historyList: [...this.state.historyList, this.state.result + "=Error division by zero"],
+                        isSecondNumber: false,
+                        result: "0"
+                    });
                     return;
                 }
                 calcResult = firstNumber / secondNumber;
@@ -157,12 +163,6 @@ class Calculator extends Component {
                 historyList: [...this.state.historyList, this.state.result + "=" + calcResult],
                 result: calcResult + nextOperand,
                 isSecondNumber: nextOperand!==""
-            });
-        }else {
-            this.setState({
-                historyList: [...this.state.historyList, this.state.result + "=Error division by zero"],
-                isSecondNumber: false,
-                result: "0"
             });
         }
     }
@@ -183,15 +183,15 @@ class Calculator extends Component {
         });
     }
 
+    /*Є баг, обрахунки починаються після другого натискання на кнопку*/
     getAndCalculateDefaultExpression = () => {
         expressionActions.fetchExpressions({
             expressionsCount: 5
         })(this.props.dispatch);
 
-        this.setState({
-            defaultExpressions: this.props.expressionState.defaultExpressions
+        this.setState({defaultExpressions: this.props.expressionState.defaultExpressions}, () => {
+            this.calcBeckEndExpression();
         });
-        this.calcBeckEndExpression();
     }
 
     render() {

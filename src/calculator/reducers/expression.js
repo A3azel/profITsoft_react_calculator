@@ -4,23 +4,19 @@ const initialState = {
 };
 
 export default (state = initialState, action) => {
-
     switch (action.type) {
-
         case 'ERROR_EXPRESSIONS': {
             return {
                 ...state,
                 isLoading: true,
             };
         }
-
         case 'REQUEST_EXPRESSIONS': {
             return {
                 ...state,
                 isLoading: true,
             };
         }
-
         case 'RECEIVE_EXPRESSIONS': {
             const {
                 expressionList,
@@ -31,8 +27,6 @@ export default (state = initialState, action) => {
                 defaultExpressions: expressionList,
             };
         }
-
         default: return state;
     }
-
 };

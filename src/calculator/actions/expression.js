@@ -15,7 +15,6 @@ const fetchExpressions = ({expressionsCount}) => (dispatch) => {
     return getExpressions(expressionsCount)
         .then(expressionList => dispatch(receiveExpressions(expressionList)))
         .catch(() => dispatch(errorReceiveExpressions()));
-
 };
 
 export default {
