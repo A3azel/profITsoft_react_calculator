@@ -25,11 +25,10 @@ class Calculator extends Component {
             result: "0",
             historyList: [],
             isSecondNumber: false,
-            defaultExpressions:[]
         }
     }
 
-    /*Якщо двічі натиснути на кнопку С то очиститься істрія*/
+    /*Якщо натиснути на кнопку С і в полі вводу буде 0 то очиститься істрія*/
     clickToButton = buttonValue => {
         if(buttonValue === "="){
             this.calcInputExpression();
@@ -169,7 +168,7 @@ class Calculator extends Component {
 
     calcBeckEndExpression(){
         let beckEndCalcHistory =[];
-        this.state.defaultExpressions.forEach((expression) => {
+        this.props.expressionState.defaultExpressions.forEach((expression) => {
             let calcResult = this.calcExpression(expression);
             if(calcResult!==undefined){
                 beckEndCalcHistory.push(expression + "=" + calcResult);
@@ -189,9 +188,7 @@ class Calculator extends Component {
             expressionsCount: 5
         })(this.props.dispatch);
 
-        this.setState({defaultExpressions: this.props.expressionState.defaultExpressions}, () => {
-            this.calcBeckEndExpression();
-        });
+        this.calcBeckEndExpression();
     }
 
     render() {

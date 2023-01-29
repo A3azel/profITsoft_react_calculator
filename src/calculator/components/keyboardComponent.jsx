@@ -34,7 +34,7 @@ class KeyboardComponent extends Component {
                     variant="contained"
                     onClick={calcExpressions}
                 >
-                    Получить и решить примеры
+                    Gat and calculate expressions
                 </Button>
             </Grid>
         );
