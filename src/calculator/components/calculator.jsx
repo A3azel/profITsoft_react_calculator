@@ -114,8 +114,7 @@ class Calculator extends Component {
         }
     }
     calcExpression(expressionString){
-        //debugger;
-        let result = expressionString.match(/(^-?\d+\.?\d*)([/+*-])(\d+\.?\d*)/);
+        let result = expressionString.match(/(^-?\d+\s*\.?\d*)([/+*-])(\s*\d+\.?\d*)/);
         let firstNumber;
         let operand;
         let secondNumber;
@@ -126,8 +125,8 @@ class Calculator extends Component {
         }catch (e){
             return;
         }
-        firstNumber = Number(firstNumber);
-        secondNumber = Number(secondNumber);
+        firstNumber = Number(firstNumber.trim());
+        secondNumber = Number(secondNumber.trim());
         let calcResult;
         switch (operand){
             case "+":
@@ -181,8 +180,6 @@ class Calculator extends Component {
             historyList: [...this.state.historyList, ...beckEndCalcHistory],
         });
     }
-
-    /*Є баг, обрахунки починаються після другого натискання на кнопку*/
     getAndCalculateDefaultExpression = () => {
         expressionActions.fetchExpressions({
             expressionsCount: 5

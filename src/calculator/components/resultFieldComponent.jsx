@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
-import {Container, FilledInput, TextField} from "@mui/material";
+import {Container, TextField} from "@mui/material";
+
 class ResultFieldComponent extends Component {
     filedStyles = {
         width:"100%"
